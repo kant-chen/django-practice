@@ -1,0 +1,14 @@
+-r ./base.txt
+
+# code linting and formatting
+black==19.10b0
+flake8==3.7.9
+
+# security check
+bandit==1.6.2
+
+# for creating test data, alternative to fixtures
+factory_boy==2.12.0 # https://factoryboy.readthedocs.io/en/latest/
+
+# property based testing, generates random data to test with
+hypothesis[django]==5.5.4 # https://hypothesis.readthedocs.io/en/latest/quickstart.html#installing
