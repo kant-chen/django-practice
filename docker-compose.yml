@@ -1,0 +1,32 @@
+version: '3'
+networks:
+  backend:
+services:
+  amazingtalker-db:
+    image: postgres:10.4-alpine
+    container_name: amazingtalker-db
+    ports:
+      - "5436:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - backend
+  amazingtalker-backend:
+    container_name: amazingtalker-backend
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    working_dir: /code
+    env_file:
+      - ./amazingtalker_dev.env
+    volumes:
+      - .:/code
+    ports:
+      - "8066:8000"
+    depends_on:
+      - amazingtalker-db
+    networks:
+      - backend
+
+volumes:
+  postgres-data:
