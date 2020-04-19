@@ -14,7 +14,7 @@ import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
+LOG_BASE_DIR = os.environ.get('LOG_BASE_DIR', '/var/log/amazingtalker')
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
@@ -44,7 +44,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_extensions',
-    'apps.user'
+    'rest_framework',
+    'rest_framework.authtoken',
+    'apps.user',
+    'apps.wallet',
 ]
 
 MIDDLEWARE = [
@@ -116,6 +119,15 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# rest_framework settings
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.TokenAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    )
+}
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.2/topics/i18n/
@@ -139,7 +151,42 @@ STATIC_URL = '/static/'
 # set custom user model
 AUTH_USER_MODEL = 'user.CustomUser'
 
-# django-smtp-ssl settings
-EMAIL_BACKEND = 'django_smtp_ssl.SSLEmailBackend'
-EMAIL_HOST = 'mail.kant-amazingtalker.com'
-EMAIL_PORT = 465
+# Logger handler
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'level': 'INFO',
+            'class': 'logging.StreamHandler',
+        },
+        'debug': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': LOG_BASE_DIR+'/debug.log',
+        },
+        'critical': {
+            'level': 'ERROR',
+            'class': 'logging.FileHandler',
+            'filename': LOG_BASE_DIR+'/errors.log',
+        },
+    },
+    'loggers': {
+        '': {
+            'level': 'DEBUG',
+            'handlers': ['debug', 'critical'],
+            'propagate': True
+        },
+    }
+}
+
+
+# email settings
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.mailgun.org'
+EMAIL_HOST_USER = "postmaster@sandbox07b966bce9634412b2a2ace7e90e6437.mailgun.org"
+EMAIL_HOST_PASSWORD = "542a3dd9f89e03910ae8583506f339df-4a62b8e8-aa748fc1"
+EMAIL_USE_TLS = True
+EMAIL_PORT = 587
+EMAIL_HOST_USER_NAME = "Kant Chen"
+EMAIL_MAILGUN_API_KEY = "2b36b51131f1ee8c51fd8f15f219c2df-4a62b8e8-d5a7b49f"
