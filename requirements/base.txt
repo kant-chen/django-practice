@@ -13,6 +13,9 @@ django-filter==2.2.0 # https://github.com/carltongibson/django-filter
 # all sorts of django extras like shell_plus
 django-extensions==2.2.8 # https://github.com/django-extensions/django-extensions
 
+# django jwt token authentication
+djangorestframework-simplejwt==4.4.0
+
 # emailer
 django-smtp-ssl==1.0 # https://github.com/bancek/django-smtp-ssl
 
