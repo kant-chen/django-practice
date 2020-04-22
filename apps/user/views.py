@@ -5,16 +5,21 @@ import traceback
 from django.views import View
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError
+from django.shortcuts import redirect
+from django.urls import reverse
 
+from oauth2client.client import FlowExchangeError
+from social_core.actions import do_complete
+from social_django.models import UserSocialAuth
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
-from social_core.actions import do_complete
-from social_django.models import UserSocialAuth
 
 from apps.user.models import CustomUser, UserValidator
 from apps.user.schema import Userchema
 from apps.core.mail import send_email_with_mailgun
+from apps.user.third_party import ThirdpartyOauth
+from rest_framework.authtoken.models import Token
 
 logger = logging.getLogger()
 
@@ -45,22 +50,44 @@ class CreateUserView(APIView):
                 response.status_code = 400
                 response_msg = {
                     "error": UserValidator.ERROR_EMAIL_EXIST.format(data.get('email'))}
-        except:
-            response.status_code = 500
-            logger.debug(str(traceback.format_exc))
-            response_msg = {"error": "Something went wrong."}
 
         response.content = json.dumps(response_msg)
 
         return response
 
 
-class ThirdPartyAuthView(APIView):
+class GoogleAuthView(APIView):
+    permission_classes = []
+    INVALID_AUTH_CODE = "Invalid authorize_code"
+
+    def get(self, request):
+        response = Response()
+        response_msg = None
+        error = request.GET.get('error', '')
+        'access_denied'
+        auth = ThirdpartyOauth(ThirdpartyOauth.GOOGLE)
+        code = request.GET.get('code', '')
+        try:
+            auth.get_access_token(code)
+            user_model_object = auth.get_user_identity()
+            token = Token.objects.get(user=user_model_object).key
+            response_msg = {"token": token}
+            response.status_code = 200
+        except FlowExchangeError as e:
+            response_msg = {"error": INVALID_AUTH_CODE}
+            response.status_code = 400
+
+        response.content = json.dumps(response_msg)
+
+        return response
+
+
+class GoogleLoginView(APIView):
     permission_classes = []
 
-    def post(self, request, backend, *args, **kwargs):
-        result = do_complete(request, backend, *args, **kwargs)
-
+    def get(self, request):
         response = Response()
-        token = UserSocialAuth.objects.get(user=None)
-        response.content = json.dump({"token": token})
+        auth = ThirdpartyOauth(ThirdpartyOauth.GOOGLE)
+        url = auth.get_auth_url()
+
+        return redirect(url)
