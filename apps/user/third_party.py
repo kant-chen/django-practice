@@ -1,63 +1,79 @@
 import requests
+import httplib2
+import urllib.parse
+
 from django.conf import settings
+
+from apiclient import discovery
 from oauth2client.client import OAuth2WebServerFlow
+
+from apps.user.models import CustomUser
 
 
 class ThirdpartyOauth:
-    GOOGLE = "GOOGLE"
-    FACEBOOK = "FACEBOOK"
+    GOOGLE = CustomUser.GOOGLE
+    FACEBOOK = CustomUser.FACEBOOK
 
-    def __init__(self, auth_source, code, state):
+    def __init__(self, auth_source, code=None):
         self.auth_source = auth_source
         self.code = code
-        self.state = state
+        self.auth_url = None
+        self.credentials = None
+        self.user_model_object = None
 
-    def authorize(self):
-        if self.auth_source == GOOGLE:
-            authorize_from_google()
-        elif self.auth_source == FACEBOOK:
-            authorize_from_facebook()
-        else:
+        if self.auth_source == self.GOOGLE:
+            self.scopes = [
+                "https://www.googleapis.com/auth/userinfo.email",
+                "https://www.googleapis.com/auth/userinfo.profile",
+                "openid"
+            ]
+            self.auth_key = settings.SOCIAL_AUTH_GOOGLE_OAUTH2_KEY
+            self.auth_secret = settings.SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET
+
+        elif self.auth_source == self.FACEBOOK:
             pass
 
-    def get_flow_object(self):
-        credentials = "credentials"
-        oauth_scopes = [
-            "https://www.googleapis.com/auth/userinfo.email",
-            "https://www.googleapis.com/auth/userinfo.profile",
-            "openid"
-        ]
         self.flow = OAuth2WebServerFlow(
-            settings.SOCIAL_AUTH_GOOGLE_OAUTH2_KEY,
-            settings.SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET,
-            oauth_scopes,
+            self.auth_key,
+            self.auth_secret,
+            self.scopes,
             "http://127.0.0.1:8066/user/complete/google-oauth2/")
 
-    def authenticate_g2(self):
-        authorize_url = self.flow.step1_get_authorize_url()
-        print(authorize_url)
-        return authorize_url
+    def get_auth_url(self):
+        """
+        * Step 1: get login URL (optional, can skip this step if already have a callback `code`)
+        """
 
-    def authorize_g2(self):
-        # print 'Go to the following link in your browser: ' + authorize_url
-        code = self.code
-        credentials = self.flow.step2_exchange(code)
-        storage = Storage(credentials_file)
-        storage.put(credentials)
-        print('The credentials_file saved to {%s}' % credentials_file)
+        self.auth_url = self.flow.step1_get_authorize_url()
+        return self.auth_url
 
-    def authorize_from_google(self):
-        url = "https://oauth2.googleapis.com/token"
-        headers = {"Content-Type": "application/x-www-form-urlencoded,"}
-        params = {
-            "code": self.code,
-            "client_id": settings.SOCIAL_AUTH_GOOGLE_OAUTH2_KEY,
-            "client_secret": settings.SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET,
-            "redirect_uri": "http://127.0.0.1:8066/user/complete/google-oauth2/",
-            "grant_type": "authorization_code",
-        }
-        res = requests.post(url, headers=headers, params=params)
-        return res
+    def get_access_token(self, code):
+        """
+        * Step 2: use the callback `code` from `get_auth_url() method to get access_token
+        """
+        # decode url encoding
+        if '%' in code:
+            code = urllib.parse.unquote(code)
+        self.code = code
+        self.credentials = self.flow.step2_exchange(code)
 
-    def authorize_from_facebook(self):
-        pass
+    def get_user_identity(self):
+        """
+        * Step 3: get user identity on third party website
+        """
+        if not self.credentials:
+            return None
+        self.email = self.credentials.id_token.get('email')
+        self.name = self.credentials.id_token.get('name')
+        self.user_id = self.credentials.id_token.get('sub')
+        self.user = self._get_or_create_user_model_object()
+        return self.user
+
+    def _get_or_create_user_model_object(self):
+        user, created = CustomUser.objects.get_or_create(
+            email=self.email,
+            third_party_id=self.user_id,
+            last_name=self.name,
+            registered_source=self.auth_source,
+        )
+        return user

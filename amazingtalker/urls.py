@@ -29,6 +29,5 @@ urlpatterns = [
     path('token_refresh/', jwt_views.TokenRefreshView.as_view(),
          name='token_refresh'),
     path(r'user/', include('apps.user.urls')),
-    #path('user/', include('social_django.urls', namespace='social')),
     path('logout/', LogoutView.as_view(template_name=settings.LOGOUT_REDIRECT_URL), name='logout'),
 ]
