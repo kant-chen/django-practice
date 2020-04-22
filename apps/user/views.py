@@ -9,6 +9,8 @@ from django.db import IntegrityError
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
+from social_core.actions import do_complete
+from social_django.models import UserSocialAuth
 
 from apps.user.models import CustomUser, UserValidator
 from apps.user.schema import Userchema
@@ -51,3 +53,14 @@ class CreateUserView(APIView):
         response.content = json.dumps(response_msg)
 
         return response
+
+
+class ThirdPartyAuthView(APIView):
+    permission_classes = []
+
+    def post(self, request, backend, *args, **kwargs):
+        result = do_complete(request, backend, *args, **kwargs)
+
+        response = Response()
+        token = UserSocialAuth.objects.get(user=None)
+        response.content = json.dump({"token": token})

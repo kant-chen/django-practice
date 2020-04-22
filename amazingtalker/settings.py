@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'apps.user',
     'apps.wallet',
+    'social_django',
 ]
 
 MIDDLEWARE = [
@@ -118,6 +119,18 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+
+AUTHENTICATION_BACKENDS = ['social_core.backends.google.GoogleOAuth2',
+                           'django.contrib.auth.backends.ModelBackend',
+                           ]
+# Oauth2 Google Login settings
+LOGIN_URL = '/user/login/google-oauth2/'
+LOGIN_REDIRECT_URL = '/main'
+LOGOUT_REDIRECT_URL = '/'
+SOCIAL_AUTH_URL_NAMESPACE = 'social'
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '548519335291-lb7hdn5l847cva9sd0vdtddjggvmu6la.apps.googleusercontent.com'
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = 'sWcZieXcnuVOzPkorKU_t8B4'
+
 
 # rest_framework settings
 REST_FRAMEWORK = {
