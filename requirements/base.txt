@@ -13,9 +13,6 @@ django-filter==2.2.0 # https://github.com/carltongibson/django-filter
 # all sorts of django extras like shell_plus
 django-extensions==2.2.8 # https://github.com/django-extensions/django-extensions
 
-# django jwt token authentication
-djangorestframework-simplejwt==4.4.0
-
 # emailer
 django-smtp-ssl==1.0 # https://github.com/bancek/django-smtp-ssl
 
@@ -25,3 +22,7 @@ ipython==7.12.0
 # django rest framework
 djangorestframework==3.11.0
 django-rest-auth==0.9.5
+
+# Oauth2
+social-auth-app-django==3.1.0
+google-oauth2-tool==0.0.3

@@ -14,6 +14,8 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
+from django.contrib.auth.views import LogoutView
+from django.conf import settings
 from django.urls import path, include
 
 from rest_framework_simplejwt import views as jwt_views
@@ -27,4 +29,6 @@ urlpatterns = [
     path('token_refresh/', jwt_views.TokenRefreshView.as_view(),
          name='token_refresh'),
     path(r'user/', include('apps.user.urls')),
+    #path('user/', include('social_django.urls', namespace='social')),
+    path('logout/', LogoutView.as_view(template_name=settings.LOGOUT_REDIRECT_URL), name='logout'),
 ]
