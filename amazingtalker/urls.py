@@ -18,9 +18,6 @@ from django.contrib.auth.views import LogoutView
 from django.conf import settings
 from django.urls import path, include
 
-from apps.user.views import CreateUserView
-from apps import user
-
 urlpatterns = [
     path('admin/', admin.site.urls),
     path(r'user/', include('apps.user.urls')),
