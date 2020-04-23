@@ -1,22 +1,15 @@
 import json
 import logging
-import traceback
 
-from django.views import View
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError
 from django.shortcuts import redirect
-from django.urls import reverse
 
 from oauth2client.client import FlowExchangeError
-from social_core.actions import do_complete
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
 
 from apps.user.models import CustomUser, UserValidator
-from apps.user.schema import Userchema
-from apps.core.mail import send_email_with_mailgun
 from apps.user.third_party import ThirdpartyOauth
 from rest_framework.authtoken.models import Token
 
@@ -62,8 +55,6 @@ class GoogleAuthView(APIView):
     def get(self, request):
         response = Response()
         response_msg = None
-        error = request.GET.get('error', '')
-        'access_denied'
         auth = ThirdpartyOauth(ThirdpartyOauth.GOOGLE)
         code = request.GET.get('code', '')
         try:
@@ -88,8 +79,6 @@ class FacebookAuthView(APIView):
     def get(self, request):
         response = Response()
         response_msg = None
-        error = request.GET.get('error', '')
-        'access_denied'
         auth = ThirdpartyOauth(ThirdpartyOauth.FACEBOOK)
         code = request.GET.get('code', '')
         try:
@@ -111,7 +100,6 @@ class GoogleLoginView(APIView):
     permission_classes = []
 
     def get(self, request):
-        response = Response()
         auth = ThirdpartyOauth(ThirdpartyOauth.GOOGLE)
         url = auth.get_auth_url()
 
@@ -122,7 +110,6 @@ class FacebookLoginView(APIView):
     permission_classes = []
 
     def get(self, request):
-        response = Response()
         auth = ThirdpartyOauth(ThirdpartyOauth.FACEBOOK)
         url = auth.get_auth_url()
 
