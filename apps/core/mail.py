@@ -6,7 +6,7 @@ from amazingtalker.settings import (
     EMAIL_HOST
 )
 
-MAILGUN_API_URL = "https://api.mailgun.net/v3/sandbox07b966bce9634412b2a2ace7e90e6437.mailgun.org"
+MAILGUN_API_URL = "https://api.mailgun.net/v3/sandbox07b966bce9634412b2a2ace7e90e6437.mailgun.org/messages"
 
 
 def send_email_with_mailgun(to_addresses, subject=None, text=None):

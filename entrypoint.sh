@@ -60,6 +60,10 @@ function startdjango {
     python manage.py runserver 0.0.0.0:8000
 }
 
+function start_django_with_https {
+  stunnel4 stunnel/stunnel.config &
+  HTTPS=1 python manage.py runserver 0.0.0.0:8001 &
+}
 
 
 function init {
@@ -71,6 +75,8 @@ function init {
     _print_status
     echo -n "Starting django"
     startdjango
+    _print_status
+    start_django_with_https
     _print_status
 }
 

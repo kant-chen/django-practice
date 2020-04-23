@@ -48,7 +48,6 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'apps.user',
     'apps.wallet',
-    'social_django',
 ]
 
 MIDDLEWARE = [
@@ -60,6 +59,8 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+SECURE_SSL_REDIRECT = True
 
 ROOT_URLCONF = 'amazingtalker.urls'
 
@@ -131,7 +132,9 @@ SOCIAL_AUTH_URL_NAMESPACE = 'social'
 SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '548519335291-lb7hdn5l847cva9sd0vdtddjggvmu6la.apps.googleusercontent.com'
 SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = 'sWcZieXcnuVOzPkorKU_t8B4'
 
-
+# Oauth2 Facebook Login settings
+SOCIAL_AUTH_FACEBOOK_OAUTH2_KEY = "237482420832383"
+SOCIAL_AUTH_FACEBOOK_OAUTH2_SECRET = ""
 # rest_framework settings
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
