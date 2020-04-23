@@ -10,7 +10,6 @@ from django.urls import reverse
 
 from oauth2client.client import FlowExchangeError
 from social_core.actions import do_complete
-from social_django.models import UserSocialAuth
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
@@ -74,7 +73,33 @@ class GoogleAuthView(APIView):
             response_msg = {"token": token}
             response.status_code = 200
         except FlowExchangeError as e:
-            response_msg = {"error": INVALID_AUTH_CODE}
+            response_msg = {"error": self.INVALID_AUTH_CODE}
+            response.status_code = 400
+
+        response.content = json.dumps(response_msg)
+
+        return response
+
+
+class FacebookAuthView(APIView):
+    permission_classes = []
+    INVALID_AUTH_CODE = "Invalid authorize_code"
+
+    def get(self, request):
+        response = Response()
+        response_msg = None
+        error = request.GET.get('error', '')
+        'access_denied'
+        auth = ThirdpartyOauth(ThirdpartyOauth.FACEBOOK)
+        code = request.GET.get('code', '')
+        try:
+            auth.get_access_token(code)
+            user_model_object = auth.get_user_identity()
+            token = Token.objects.get(user=user_model_object).key
+            response_msg = {"token": token}
+            response.status_code = 200
+        except FlowExchangeError as e:
+            response_msg = {"error": self.INVALID_AUTH_CODE}
             response.status_code = 400
 
         response.content = json.dumps(response_msg)
@@ -88,6 +113,17 @@ class GoogleLoginView(APIView):
     def get(self, request):
         response = Response()
         auth = ThirdpartyOauth(ThirdpartyOauth.GOOGLE)
+        url = auth.get_auth_url()
+
+        return redirect(url)
+
+
+class FacebookLoginView(APIView):
+    permission_classes = []
+
+    def get(self, request):
+        response = Response()
+        auth = ThirdpartyOauth(ThirdpartyOauth.FACEBOOK)
         url = auth.get_auth_url()
 
         return redirect(url)

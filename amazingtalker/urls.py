@@ -18,16 +18,11 @@ from django.contrib.auth.views import LogoutView
 from django.conf import settings
 from django.urls import path, include
 
-from rest_framework_simplejwt import views as jwt_views
-
 from apps.user.views import CreateUserView
 from apps import user
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('token_auth/', jwt_views.TokenObtainPairView.as_view(), name='token_auth'),
-    path('token_refresh/', jwt_views.TokenRefreshView.as_view(),
-         name='token_refresh'),
     path(r'user/', include('apps.user.urls')),
     path('logout/', LogoutView.as_view(template_name=settings.LOGOUT_REDIRECT_URL), name='logout'),
 ]

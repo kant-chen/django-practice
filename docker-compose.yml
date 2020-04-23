@@ -23,6 +23,7 @@ services:
       - .:/code
     ports:
       - "8066:8000"
+      - "8443:8443"
     depends_on:
       - amazingtalker-db
     networks:

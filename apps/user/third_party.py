@@ -29,15 +29,27 @@ class ThirdpartyOauth:
             ]
             self.auth_key = settings.SOCIAL_AUTH_GOOGLE_OAUTH2_KEY
             self.auth_secret = settings.SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET
+            self.flow = OAuth2WebServerFlow(
+                self.auth_key,
+                self.auth_secret,
+                self.scopes,
+                "http://127.0.0.1:8066/user/complete/google-oauth2/")
 
         elif self.auth_source == self.FACEBOOK:
-            pass
-
-        self.flow = OAuth2WebServerFlow(
-            self.auth_key,
-            self.auth_secret,
-            self.scopes,
-            "http://127.0.0.1:8066/user/complete/google-oauth2/")
+            self.scopes = ["email"]
+            self.auth_key = settings.SOCIAL_AUTH_FACEBOOK_OAUTH2_KEY
+            self.auth_secret = settings.SOCIAL_AUTH_FACEBOOK_OAUTH2_SECRET
+            FACEBOOK_AUTH_URI = "https://www.facebook.com/v6.0/dialog/oauth"
+            FACEBOOK_TOKEN_URI = "https://graph.facebook.com/v6.0/oauth/access_token"
+            FACEBOOK_REDIRECT_URI = "https://127.0.0.1:8443/user/complete/facebook-oauth2/"
+            self.flow = OAuth2WebServerFlow(
+                self.auth_key,
+                self.auth_secret,
+                self.scopes,
+                FACEBOOK_REDIRECT_URI,
+                token_uri=FACEBOOK_TOKEN_URI,
+                auth_uri=FACEBOOK_AUTH_URI,
+            )
 
     def get_auth_url(self):
         """
