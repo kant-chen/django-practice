@@ -1,4 +1,4 @@
-# Amazing Talker project from 陳彥丞
+# Amazing Talker project from Kant (Django)
 
-#### 啟動Server
-執行 `docker-compose up`
+#### Start Server
+run `docker-compose up`
