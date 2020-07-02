@@ -1,7 +1,9 @@
 # Amazing Talker project from Kant (Django)
 
 #### Project Introduction
-The purpose of this project is to create a best pratice of Django as a backend service.
+##### The purpose of this project is to:
+1.  create a best pratice of Django as a backend service.
+2.  Implement clean code philosophy in a Pythonic way
 
 #### Project Details
 ##### Server
