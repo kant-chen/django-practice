@@ -1,4 +1,4 @@
-# Amazing Talker project from Kant (Django)
+# Sample Django project integrated with OAuth Login
 
 #### Project Introduction
 ##### The purpose of this project is to:
