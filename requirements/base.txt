@@ -17,7 +17,7 @@ django-extensions==2.2.8 # https://github.com/django-extensions/django-extension
 django-smtp-ssl==1.0 # https://github.com/bancek/django-smtp-ssl
 
 # ipython
-ipython==7.12.0
+ipython==7.16.3
 
 # django rest framework
 djangorestframework==3.11.0
